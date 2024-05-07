@@ -23,7 +23,8 @@ public class Serie {
     private String poster;
     private String sinopse;
 
-    @Transient // o "hibernate" ignora esse atributo, ou seja, o jpa não converte coluna do banco de dados
+//    @Transient // o "hibernate" ignora esse atributo, ou seja, o jpa não converte coluna do banco de dados
+    @OneToMany(mappedBy = "serie", cascade = CascadeType.ALL, fetch = FetchType.EAGER) // Sem o "cascade", ele não entende que também teve episódios inseridos e que ele precisava persistir.
     private List<Episodio> episodios = new ArrayList<>();
 
     public Serie(DadosSerie dadosSerie){
@@ -109,21 +110,23 @@ public class Serie {
     }
 
     public void setEpisodios(List<Episodio> episodios) {
+        episodios.forEach(e -> e.setSerie(this)); // estratégia para associar a chave estrangeira, o que indica que esta Série (this) é a dona do episodio
         this.episodios = episodios;
     }
 
     @Override
     public String toString() {
-        return "Serie{" +
+        return
                 "genero=" + genero +
-                ", titulo='" + titulo + '\'' +
-                ", totalTemporadas=" + totalTemporadas +
-                ", avaliacao=" + avaliacao +
-                ", atores='" + atores + '\'' +
-                ", poster='" + poster + '\'' +
-                ", sinopse'" + sinopse + '\'' +
-                '}';
+                        ", titulo='" + titulo + '\'' +
+                        ", totalTemporadas=" + totalTemporadas +
+                        ", avaliacao=" + avaliacao +
+                        ", atores='" + atores + '\'' +
+                        ", poster='" + poster + '\'' +
+                        ", sinopse='" + sinopse + '\'' +
+                        ", episodios='" + episodios + '\'';
     }
+
 
 
 }
